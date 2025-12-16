@@ -1,11 +1,20 @@
 import Signup from "./Signup";
 import Login from "./Login";
 import "./index.css";
-import { useAuthContext } from "./hooks/useAuthContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { autoLogin } from "./store/slices/AuthSlice";
 
 function App() {
-  const { username } = useAuthContext();
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(autoLogin());
+  }, []);
+
+  const { username } = useSelector((store) => store.auth);
 
   return (
     <BrowserRouter>

@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import "./index.css";
 import { Link, useNavigate } from "react-router-dom";
 import rolling from "./assets/rolling.gif";
-import { useAuthContext } from "./hooks/useAuthContext";
 import usePostFetch from "./hooks/usePostFetch";
+import { useDispatch } from "react-redux";
+import { setUsername } from "./store/slices/AuthSlice";
+
 function Signup() {
-  const { setUsername } = useAuthContext();
+  const dispatch = useDispatch();
   const { error, loading, fetch } = usePostFetch();
 
   const navigate = useNavigate();
@@ -24,8 +26,8 @@ function Signup() {
 
     if (data) {
       localStorage.setItem("JwtToken", data.token);
-      setUsername(data.username);
-      navigate("/")
+      dispatch(setUsername({ username: data.username }));
+      navigate("/");
     }
   };
 

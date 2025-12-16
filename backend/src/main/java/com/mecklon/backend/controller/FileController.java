@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 @RequestMapping("/api/files")
 public class FileController {
 
+    // change setup to appropriate path
     private final String uploadDir = "C:/Users/Mecklon Fernandes/Desktop/code/setup/backend/uploads";
 
     @GetMapping("/{filename}")
