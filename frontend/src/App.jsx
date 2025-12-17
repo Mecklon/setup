@@ -7,7 +7,6 @@ import { useEffect } from "react";
 import { autoLogin } from "./store/slices/AuthSlice";
 
 function App() {
-
   const dispatch = useDispatch();
 
   useEffect(() => {

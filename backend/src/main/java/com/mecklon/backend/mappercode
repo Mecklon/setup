@@ -1,0 +1,105 @@
+@Mapper(componentModel = "spring")
+public interface UserMapper{
+    @Mapping(source = "user.id" , target = "id")
+    @Mapping(source = "user.username, target = "name")
+    @Mapping(source = "password", ignore = true)
+    @Mapping(source = "user.dateOfBirth", target = "dob")
+    @Mapping(source = "user.status", target = "status" , defaultValue = "INACTIVE")
+    @Mapping(source = "contact.mobileNumber", target = "mob", qualifiedByName = "maskPhone")
+    @Mapping(source = "contact.email" , target = "emailId")
+    UserResponse mapUserAndContactToUserResponse(User user, Contact contact);;
+
+    @Names("masPhone")
+    static String getPhoneNumber(String phone){
+        return "***" + phoen.substring(4):
+    }
+
+
+
+    @Entity
+    @Table(name = "orders")
+    public class OrderDao {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long orderId;
+
+        @OneToMany(
+            mappedBy = "order",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL
+        )
+        private List<OrderItemDao> items;
+    }
+
+    @Entity
+    @Table(name = "order_items")
+    public class OrderItemDao {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+
+        private String productName;
+        private int qty;
+        private double price;
+
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "order_id")
+        private OrderDao order;
+    }
+
+    public class OrderLineDto {
+        private Long itemId;
+        private String name;
+        private int quantity;
+        private double unitPrice;
+    }
+
+    public class OrderResponseDto {
+        private Long id;
+        private List<OrderLineDto> lines;
+    }
+
+
+    @Mapper(componentModel = "spring")
+    public interface OrderItemMapper {
+
+        @Mapping(source = "id", target = "itemId")
+        @Mapping(source = "productName", target = "name")
+        @Mapping(source = "qty", target = "quantity")
+        @Mapping(source = "price", target = "unitPrice")
+        OrderLineDto toDto(OrderItemDao dao);
+
+        // List mapping (auto-generated)
+        List<OrderLineDto> toDtoList(List<OrderItemDao> daoList);
+    }
+
+    @Mapper(
+        componentModel = "spring",
+        uses = OrderItemMapper.class
+    )
+    public interface OrderMapper {
+
+        @Mapping(source = "orderId", target = "id")
+        @Mapping(source = "items", target = "lines")
+        OrderResponseDto toDto(OrderDao dao);
+    }
+
+
+
+    @Repository
+    public interface OrderRepository extends JpaRepository<OrderDao, Long> {
+    }
+
+
+    public class OrderService {
+
+        private final OrderRepository orderRepository;
+
+        return orderMapper.toDto(order);
+
+
+
+
+

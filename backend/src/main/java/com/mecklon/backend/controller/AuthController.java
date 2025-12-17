@@ -54,8 +54,7 @@ public class AuthController {
         }
     }
 
-
-
+    
 
 
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder((12));
