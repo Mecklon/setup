@@ -1,7 +1,7 @@
 package com.mecklon.backend.config;
 
 import com.mecklon.backend.service.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -20,11 +20,10 @@ import java.util.List;
 
 @Configuration
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    @Autowired
-    JwtService jwtService;
-
+    private final JwtService jwtService;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {

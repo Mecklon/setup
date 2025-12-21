@@ -1,15 +1,15 @@
 package com.mecklon.backend.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer {
 
-    @Autowired
-    private JwtChannelInterceptor jwtChannelInterceptor;
+    private final JwtChannelInterceptor jwtChannelInterceptor;
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {

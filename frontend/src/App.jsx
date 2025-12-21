@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { autoLogin } from "./store/slices/AuthSlice";
+import WebSocketProvider from "./context/WebSocketProvider";
 
 function App() {
   const dispatch = useDispatch();
@@ -12,8 +13,6 @@ function App() {
   useEffect(() => {
     dispatch(autoLogin());
   }, []);
-
-
 
   const { username } = useSelector((store) => store.auth);
 
@@ -27,7 +26,14 @@ function App() {
         </Routes>
       ) : (
         <Routes>
-          <Route path="*" element={<div>App {username}</div>}></Route>
+          <Route
+            path="*"
+            element={
+              <WebSocketProvider>
+                <div>App {username}</div>
+              </WebSocketProvider>
+            }
+          ></Route>
         </Routes>
       )}
     </BrowserRouter>
