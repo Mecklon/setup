@@ -13,6 +13,8 @@ function App() {
     dispatch(autoLogin());
   }, []);
 
+
+
   const { username } = useSelector((store) => store.auth);
 
   return (
@@ -25,7 +27,7 @@ function App() {
         </Routes>
       ) : (
         <Routes>
-          <Route path="*" element={<div>App</div>}></Route>
+          <Route path="*" element={<div>App {username}</div>}></Route>
         </Routes>
       )}
     </BrowserRouter>

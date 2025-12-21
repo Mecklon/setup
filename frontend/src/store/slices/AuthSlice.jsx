@@ -9,6 +9,7 @@ let initialState = {
 
 export const autoLogin = createAsyncThunk("auth/autologin", async () => {
   const res = await api.get("/autoLogin");
+  console.log(res.data)
   return res.data;
 });
 

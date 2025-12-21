@@ -1,35 +1,27 @@
 package com.mecklon.backend.controller;
 
 
-import com.mecklon.backend.DTO.LoginRequest;
-import com.mecklon.backend.model.User;
-import com.mecklon.backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.mecklon.backend.DTO.LoginRequestDto;
+import com.mecklon.backend.DTO.LoginResponseDto;
+import com.mecklon.backend.DTO.SignupRequestDto;
+import com.mecklon.backend.DTO.SignupResponseDto;
+import com.mecklon.backend.security.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import com.mecklon.backend.service.JwtService;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
 @RestController
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    UserService us;
+    private final AuthService authService;
 
-    @Autowired
-    JwtService jwt;
-
-    @Autowired
-    AuthenticationManager authenticationManager;
 
     @GetMapping("/autoLogin")
     ResponseEntity<Map<String,String>> autoLogin(Authentication auth){
@@ -39,38 +31,21 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest req) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request){
         try{
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(req.getUsername(),req.getPassword()));
-
-            String token = jwt.generateJWT(req.getUsername());
-            Map<String, String> response = new HashMap<>();
-            response.put("token", token);
-            response.put("username",req.getUsername());
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-
-        }catch (BadCredentialsException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error","invalide username or password"));
+            return ResponseEntity.status(HttpStatus.OK).body(authService.login(request));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    
-
-
-    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder((12));
-
     @PostMapping("/signup")
-    ResponseEntity<Map<String, String>> signup(@RequestBody User user) {
-        User exists = us.findUser(user.getUsername());
-        if (exists == null) {
-            user.setPassword(encoder.encode(user.getPassword()));
-            us.addUser(user);
-            String token = jwt.generateJWT(user.getUsername());
-            Map<String, String> response = new HashMap<>();
-            response.put("token", token);
-            response.put("username",user.getUsername());
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<SignupResponseDto> signup(@RequestBody SignupRequestDto request){
+        try{
+            System.out.println(request);
+            return ResponseEntity.status(HttpStatus.OK).body(authService.signup(request));
+        }catch (Exception e){
+            throw new RuntimeException(e);
         }
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 }

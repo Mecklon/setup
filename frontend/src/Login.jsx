@@ -28,7 +28,7 @@ let Login = () => {
     );
     if (data) {
       dispatch(setUsername({username: data.username}))
-      localStorage.setItem("JwtToken", data.token);
+      localStorage.setItem("JwtToken", data.jwtToken);
       navigate("/");
     }
   };

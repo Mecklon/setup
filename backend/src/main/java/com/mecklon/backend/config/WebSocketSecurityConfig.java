@@ -1,6 +1,5 @@
 package com.mecklon.backend.config;
 
-import com.mecklon.backend.config.JwtChannelInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;

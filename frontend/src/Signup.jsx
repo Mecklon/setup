@@ -25,7 +25,7 @@ function Signup() {
     );
 
     if (data) {
-      localStorage.setItem("JwtToken", data.token);
+      localStorage.setItem("JwtToken", data.jwtToken);
       dispatch(setUsername({ username: data.username }));
       navigate("/");
     }
