@@ -5,7 +5,6 @@ export const websocketContext = createContext();
 
 const WebSocketProvider = ({ children }) => {
   const ws = useWebSocket(localStorage.getItem("JwtToken"));
-  console.log("afhdfkld")
   const clientRef = useRef(null);
   if (!clientRef.current) {
     clientRef.current = ws; // stable forever

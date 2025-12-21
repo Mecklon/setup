@@ -2,10 +2,12 @@ package com.mecklon.backend.security;
 
 
 import com.mecklon.backend.model.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -31,16 +33,44 @@ public class AuthUtil {
                 .signWith(getSecretKey())
                 .compact();
     }
-    public String getUsernameFromToken(String token){
+
+    private Claims getClaims(String token) {
         try {
             return Jwts.parser()
                     .verifyWith(getSecretKey())
                     .build()
                     .parseSignedClaims(token)
-                    .getPayload().getSubject();
+                    .getPayload();
         } catch (JwtException | IllegalArgumentException e) {
             return null;
         }
     }
+
+    public boolean validateToken(String token) {
+        Claims claims = getClaims(token);
+
+        if (claims == null) {
+            return false;
+        }
+
+        String username = claims.getSubject();
+        if (username == null || username.isBlank()) {
+            return false;
+        }
+
+        Date expiration = claims.getExpiration();
+        if (expiration == null || expiration.before(new Date())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public String getUsernameFromToken(String token) {
+        Claims claims = getClaims(token);
+        return claims != null ? claims.getSubject() : null;
+    }
+
+
 
 }

@@ -1,6 +1,6 @@
 package com.mecklon.backend.config;
 
-import com.mecklon.backend.service.JwtService;
+import com.mecklon.backend.security.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final JwtService jwtService;
+    private final AuthUtil authUtil;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -34,8 +34,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:5173"); // your frontend origin
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:5173"); // your frontend origin
     }
 
     @Override
@@ -43,8 +42,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor =
-                        MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                     String authHeader = accessor.getFirstNativeHeader("Authorization");
@@ -53,11 +51,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         String jwt = authHeader.substring(7);
 
                         // 🔑 Validate JWT and extract username
-                        String username = jwtService.extractUserName(jwt);
-                        if (jwtService.validateToken(jwt)) {
-                            accessor.setUser(
-                                    new UsernamePasswordAuthenticationToken(username, null, List.of())
-                            );
+                        String username = authUtil.getUsernameFromToken(jwt);
+                        if (authUtil.validateToken(jwt)) {
+                            accessor.setUser(new UsernamePasswordAuthenticationToken(username, null, List.of()));
                         }
                     }
                 }

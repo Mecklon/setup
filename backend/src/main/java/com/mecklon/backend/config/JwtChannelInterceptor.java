@@ -1,6 +1,6 @@
 package com.mecklon.backend.config;
 
-import com.mecklon.backend.service.JwtService;
+import com.mecklon.backend.security.AuthUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class JwtChannelInterceptor implements ChannelInterceptor {
 
-    private final JwtService jwtService;
+    private final AuthUtil authUtil;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -22,7 +22,7 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String token = accessor.getFirstNativeHeader("Authorization");
             if (token != null && token.startsWith("Bearer ")) {
-                String username = jwtService.extractUserName(token.substring(7));
+                String username = authUtil.getUsernameFromToken(token.substring(7));
                 accessor.setUser(() -> username); // lambda Principal
                 accessor.getSessionAttributes().put("username", username);
                 System.out.println("User set in CONNECT: " + username);
